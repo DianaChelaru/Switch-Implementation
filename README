@@ -1,0 +1,38 @@
+1 2 3 (toate)
+
+Procesul de comutare:
+Am pornit de la pseudocodul sugerat in enuntul temei. Am folosit
+MAC_table in care se retine adresa MAC sursa si interfata primita.
+Am verificat daca adresa primita este unicast, daca da atunci se
+verifica daca adresa destinatie se afla in tabela MAC, daca nu se
+afla sau daca adresa primita nu este unicast atunci se va face
+flooding, adica se va trmite frame ul pe toate celelalte porturi
+disponibile.
+VLAN:
+Am modificat codul de la prima cerinta si am citit datele pentru
+switch-uri din fisierul de configurare cum ar fi prioritatea, precum
+si numarul interfetelor si vlan id ul acestora (pentru porturile
+trunk am notat cu -1) pe care le-am retinut intr-un dictionar.
+Aici am luat in vedere fiecare posibilitate de trimitere a pachetului.
+-daca un pachet vine de pe o interfata trunk pe o alta interfata trunk,
+atunci acesta ramane la fel
+-daca vine de pe o interfata trunk pe o interfata access, atunci se va
+scoate header-ul 802.1q
+-daca vine de pe o interfata access pe o interfata trunk, atunci se va
+adauga header ul 802.1q
+-daca vine de pe o interfata access pe o alta interfata access, atunci
+pachetul nu va fi modificat
+STP:
+Am urmat pseudocodul din enuntul temei. Am pus in pachetul BPDU doar ce
+parea a fi esential (root_bridge_ID, sender_bridge_ID, sender_path_cost,
+port). Root bridge ul este ales in functie de prioritatea fiecarui
+switch. Va fi root bridge switch ul cu prioritatea mai mica. Starile
+porturilor trunk ale switch ului au fost stocate intr-un dictionar
+(listening, blocking). In functia init am initializat STP ul pe switch.
+Porturile se seteaza la o stare inintiala. In functia send_bdpu_every_sec
+se trimite un pachet bpdu in fiecare secunda pe toate interfetele daca
+switch ul este root bridge. Functia receive_bpdu va fi folositca cand un
+pachet BPDU va fi primit. In aceasta se decide daca trebuie ca root
+bridge ul sa fie actualizat si daca switch ul curent trebuie sa isi
+actualizeze costul drumului. Se vor schimba starile porturilor conform
+algoritmului STP.
